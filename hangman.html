@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hangman Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #ffffff;
+    }
+    .game-container {
+      margin: 50px auto;
+      padding: 20px;
+      max-width: 500px;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4);
+    }
+    h1 {
+      color: #ffffff;
+    }
+    #alphabet-buttons button {
+      margin: 5px;
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #alphabet-buttons button:disabled {
+      background-color: #555;
+      color: #999;
+      cursor: not-allowed;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .correct {
+      background-color: #28a745;
+      color: #fff;
+    }
+    .wrong {
+      background-color: #dc3545;
+      color: #fff;
+    }
+    #restart-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #restart-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>Hangman Game</h1>
+    <p id="hint">Guess the word: <span id="word"></span></p>
+    <div id="alphabet-buttons"></div>
+    <p id="message"></p>
+    <button id="restart-btn">Restart Game</button>
+  </div>
+  <audio id="correct-sound" src="correct-6033.mp3"></audio>
+  <audio id="wrong-sound" src="wrong-47985.mp3"></audio>
+  <audio id="game-over-sound" src="game-over-38511.mp3"></audio>
+  <script>
+    const words = [
+      "angle", "house", "grass", "metal", "stone", "bread", "lemon", 
+      "tiger", "horse", "plane", "shirt", "pants", "glass", "earth", 
+      "heart", "dream", "cloud", "storm", "night", "light", "beach", 
+      "snake", "paper", "sword", "music", "water", "ocean", "board", 
+      "chair", "table", "shelf", "plant", "fruit", "mango", "apple", 
+      "track", "river", "smile", "space", "peace", "dance", "sharp", 
+      "floor", "brain", "world", "magic", "faith", "eagle", "crown"
+    ];
+    const maxWrongAttempts = 15;
+    let selectedWord = "";
+    let guessedWord = [];
+    let wrongAttempts = 0;
+
+    const wordElement = document.getElementById("word");
+    const messageElement = document.getElementById("message");
+    const alphabetButtons = document.getElementById("alphabet-buttons");
+    const restartButton = document.getElementById("restart-btn");
+    const correctSound = document.getElementById("correct-sound");
+    const wrongSound = document.getElementById("wrong-sound");
+    const gameOverSound = document.getElementById("game-over-sound");
+
+    function initializeGame() {
+      selectedWord = words[Math.floor(Math.random() * words.length)];
+      guessedWord = Array(selectedWord.length).fill("_");
+      wrongAttempts = 0;
+      wordElement.textContent = guessedWord.join(" ");
+      messageElement.textContent = "";
+      alphabetButtons.innerHTML = "";
+
+      for (let i = 65; i <= 90; i++) {
+        const button = document.createElement("button");
+        button.textContent = String.fromCharCode(i);
+        button.onclick = () => handleGuess(button.textContent.toLowerCase());
+        alphabetButtons.appendChild(button);
+      }
+    }
+
+    function handleGuess(letter) {
+      const buttons = alphabetButtons.getElementsByTagName("button");
+      for (const button of buttons) {
+        if (button.textContent.toLowerCase() === letter) {
+          button.disabled = true;
+        }
+      }
+
+      if (selectedWord.includes(letter)) {
+        correctSound.play();
+        for (let i = 0; i < selectedWord.length; i++) {
+          if (selectedWord[i] === letter) {
+            guessedWord[i] = letter;
+          }
+        }
+        wordElement.textContent = guessedWord.join(" ");
+        messageElement.textContent = "Correct! 🎉";
+        messageElement.className = "correct";
+        if (!guessedWord.includes("_")) {
+          messageElement.textContent = "Congratulations! You guessed the word! 🎉";
+          disableAllButtons();
+        }
+      } else {
+        wrongSound.play();
+        wrongAttempts++;
+        messageElement.textContent = `Wrong Attempt! ❌ (${wrongAttempts}/${maxWrongAttempts})`;
+        messageElement.className = "wrong";
+        if (wrongAttempts >= maxWrongAttempts) {
+          gameOverSound.play();
+          messageElement.textContent = `Game Over! The word was "${selectedWord}". ❌`;
+          disableAllButtons();
+        }
+      }
+    }
+
+    function disableAllButtons() {
+      const buttons = alphabetButtons.getElementsByTagName("button");
+      for (const button of buttons) {
+        button.disabled = true;
+      }
+    }
+
+    restartButton.onclick = initializeGame;
+    initializeGame();
+  </script>
+</body>
+</html>

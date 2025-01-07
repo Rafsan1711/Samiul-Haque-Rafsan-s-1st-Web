@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Quiz App</title>
+  <style>
+    /* ডার্ক মোড ডিজাইন */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      color: #ffffff;
+    }
+
+    .quiz-container {
+      background: #1e1e1e;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    h1 {
+      color: #4caf50;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    .question {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #ffffff;
+    }
+
+    .options {
+      margin: 10px 0;
+      text-align: left;
+    }
+
+    .options label {
+      display: block;
+      background: #292929;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      border: 1px solid #4caf50;
+    }
+
+    .options input {
+      margin-right: 10px;
+    }
+
+    .options label:hover {
+      background: #383838;
+    }
+
+    #nextButton {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+
+    #nextButton:hover {
+      background-color: #3e8e41;
+    }
+
+    #scoreboard {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #4caf50;
+      text-align: left;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    html, body {
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Dynamic Quiz App</h1>
+    <div id="quiz">
+      <!-- কুইজের প্রশ্ন এখানে লোড হবে -->
+    </div>
+    <button id="nextButton">Next</button>
+    <div id="scoreboard"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      { question: "What is the capital of France?", options: ["Paris", "London", "Berlin", "Madrid"], answer: "Paris" },
+      { question: "Which language is used for web development?", options: ["Python", "JavaScript", "C++", "Java"], answer: "JavaScript" },
+      { question: "What is 2 + 2?", options: ["3", "4", "5", "6"], answer: "4" },
+      { question: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Saturn"], answer: "Mars" },
+      { question: "Who wrote 'Romeo and Juliet'?", options: ["Shakespeare", "Hemingway", "Tolkien", "Rowling"], answer: "Shakespeare" },
+      { question: "What is the square root of 64?", options: ["6", "7", "8", "9"], answer: "8" },
+      { question: "What is the capital of Japan?", options: ["Tokyo", "Beijing", "Seoul", "Bangkok"], answer: "Tokyo" },
+      { question: "Which year did World War II end?", options: ["1942", "1945", "1948", "1950"], answer: "1945" },
+      { question: "What is the chemical symbol for water?", options: ["O2", "CO2", "H2O", "H2"], answer: "H2O" },
+      { question: "What is the largest desert in the world?", options: ["Sahara", "Arctic", "Antarctica", "Gobi"], answer: "Sahara" },
+      { question: "What is the smallest prime number?", options: ["1", "2", "3", "5"], answer: "2" },
+      { question: "Who painted the Mona Lisa?", options: ["Michelangelo", "Leonardo da Vinci", "Raphael", "Van Gogh"], answer: "Leonardo da Vinci" },
+      { question: "What is the chemical symbol for gold?", options: ["Au", "Ag", "Pb", "Fe"], answer: "Au" },
+      { question: "Who discovered gravity?", options: ["Einstein", "Newton", "Tesla", "Galileo"], answer: "Newton" },
+      { question: "What is the largest mammal?", options: ["Elephant", "Blue Whale", "Giraffe", "Shark"], answer: "Blue Whale" },
+      { question: "What is the national animal of Bangladesh?", options: ["Tiger", "Lion", "Peacock", "Elephant"], answer: "Tiger" },
+      { question: "What is the capital of Canada?", options: ["Toronto", "Vancouver", "Ottawa", "Montreal"], answer: "Ottawa" },
+      { question: "What is the smallest planet in the solar system?", options: ["Mercury", "Venus", "Earth", "Mars"], answer: "Mercury" },
+      { question: "What is the largest ocean?", options: ["Atlantic", "Indian", "Arctic", "Pacific"], answer: "Pacific" },
+      { question: "What is the main ingredient in sushi?", options: ["Rice", "Noodles", "Wheat", "Fish"], answer: "Rice" },
+      { question: "Which gas do plants absorb?", options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], answer: "Carbon Dioxide" },
+      { question: "Who invented the telephone?", options: ["Alexander Graham Bell", "Thomas Edison", "Nikola Tesla", "Albert Einstein"], answer: "Alexander Graham Bell" },
+      { question: "What is the boiling point of water?", options: ["90°C", "100°C", "110°C", "120°C"], answer: "100°C" },
+      { question: "What is the capital of Italy?", options: ["Rome", "Milan", "Naples", "Venice"], answer: "Rome" },
+      { question: "Which animal is known as the King of the Jungle?", options: ["Tiger", "Lion", "Elephant", "Leopard"], answer: "Lion" },
+      { question: "Which planet has the most moons?", options: ["Earth", "Mars", "Jupiter", "Saturn"], answer: "Saturn" },
+      { question: "What is the chemical symbol for salt?", options: ["NaCl", "HCl", "KCl", "NaOH"], answer: "NaCl" },
+      { question: "Which country has the largest population?", options: ["India", "China", "USA", "Indonesia"], answer: "China" },
+      { question: "What is the name of the longest river in the world?", options: ["Amazon", "Nile", "Yangtze", "Mississippi"], answer: "Nile" },
+      { question: "What is the capital of Germany?", options: ["Berlin", "Munich", "Frankfurt", "Hamburg"], answer: "Berlin" },
+      { question: "What is the freezing point of water?", options: ["0°C", "32°F", "100°C", "212°F"], answer: "0°C" },
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    const scoreboard = [];
+
+    const quizContainer = document.getElementById("quiz");
+    const nextButton = document.getElementById("nextButton");
+    const scoreBoardDisplay = document.getElementById("scoreboard");
+
+    function loadQuestion() {
+      const questionData = quizData[currentQuestion];
+      quizContainer.innerHTML = `
+        <div class="question">${questionData.question}</div>
+        <div class="options">
+          ${questionData.options
+            .map(
+              (option) =>
+                `<label>
+                  <input type="radio" name="answer" value="${option}">
+                  ${option}
+                </label>`
+            )
+            .join("")}
+        </div>
+      `;
+    }
+
+    function getSelectedAnswer() {
+      const options = document.getElementsByName("answer");
+      for (const option of options) {
+        if (option.checked) {
+          return option.value;
+        }
+      }
+      return null;
+    }
+
+    nextButton.addEventListener("click", () => {
+      const selectedAnswer = getSelectedAnswer();
+      if (!selectedAnswer) {
+        alert("Please select an answer!");
+        return;
+      }
+
+      const questionData = quizData[currentQuestion];
+      const correct = selectedAnswer === questionData.answer;
+      if (correct) {
+        score++;
+      }
+
+      scoreboard.push({
+        question: questionData.question,
+        selectedAnswer,
+        correctAnswer: questionData.answer,
+        result: correct ? "Correct" : "Wrong",
+      });
+
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        displayScoreboard();
+      }
+    });
+
+    function displayScoreboard() {
+      quizContainer.innerHTML = `<h2>Quiz Completed!</h2>`;
+      let scoreboardHTML = `<h3>Your score: ${score} / ${quizData.length}</h3>`;
+      scoreboardHTML += "<ul>";
+      scoreboard.forEach((entry, index) => {
+        scoreboardHTML += `
+          <li>
+            <strong>Q${index + 1}:</strong> ${entry.question} <br>
+            <strong>Your Answer:</strong> ${entry.selectedAnswer} <br>
+            <strong>Correct Answer:</strong> ${entry.correctAnswer} <br>
+            <strong>Result:</strong> ${entry.result}
+          </li><br>
+        `;
+      });
+      scoreboardHTML += "</ul>";
+      scoreBoardDisplay.innerHTML = scoreboardHTML;
+      nextButton.style.display = "none";
+
+      // Scroll to the top
+      window.scrollTo(0, 0);
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astronomy Quiz Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .quiz-container {
+            width: 80%;
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+        }
+
+        .question-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #planet-img {
+            width: 120px;
+            height: 120px;
+            margin-top: 20px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .option-btn {
+            background-color: #3a8dff;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-btn:hover {
+            background-color: #2a7bc9;
+            transform: scale(1.05);
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+            background-color: #1d6b9e;
+        }
+
+        .score-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #next-btn {
+            background-color: #ff6f61;
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            display: block;
+            margin: 25px auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        #next-btn:hover {
+            background-color: #e65a4d;
+        }
+
+        #next-btn:active {
+            transform: scale(0.98);
+        }
+
+        .header-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        #timer, #score {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff8c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="header-container">
+            <h1>Astronomy Quiz</h1>
+            <p>Answer the questions and see how much you know about the Solar System!</p>
+        </div>
+        
+        <div class="question-container">
+            <h2 id="question">Question</h2>
+            <img id="planet-img" src="" alt="Planet Image">
+        </div>
+
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(0)">Option 1</button>
+            <button class="option-btn" onclick="checkAnswer(1)">Option 2</button>
+            <button class="option-btn" onclick="checkAnswer(2)">Option 3</button>
+            <button class="option-btn" onclick="checkAnswer(3)">Option 4</button>
+        </div>
+
+        <div class="score-container">
+            <p>Score: <span id="score">0</span></p>
+            <p>Time Left: <span id="timer">30</span> seconds</p>
+        </div>
+
+        <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <audio id="correct-sound" src="correct-6033.mp3"></audio>
+    <audio id="wrong-sound" src="wrong-47985.mp3"></audio>
+    <audio id="game-over-sound" src="game-over-38511.mp3"></audio>
+
+    <script>
+        const questions = [
+            {question: "Which planet is known as the Red Planet?", options: ["Venus", "Mars", "Jupiter", "Saturn"], correct: "Mars", img: "mars.jpeg"},
+            {question: "Which planet is closest to the Sun?", options: ["Earth", "Mercury", "Venus", "Mars"], correct: "Mercury", img: "mercury.jpeg"},
+            {question: "Which planet is known for its rings?", options: ["Saturn", "Uranus", "Jupiter", "Neptune"], correct: "Saturn", img: "saturn.jpeg"},
+            {question: "Which planet is known as the Earth’s twin?", options: ["Mars", "Venus", "Jupiter", "Mercury"], correct: "Venus", img: "venus.jpeg"},
+            {question: "Which planet has the largest storm in the Solar System?", options: ["Earth", "Jupiter", "Saturn", "Neptune"], correct: "Jupiter", img: "jupiter.jpeg"},
+            {question: "Which planet is the largest in the Solar System?", options: ["Earth", "Mars", "Jupiter", "Saturn"], correct: "Jupiter", img: "jupiter.jpeg"},
+            {question: "What is the hottest planet in our solar system?", options: ["Venus", "Mercury", "Mars", "Saturn"], correct: "Venus", img: "venus.jpeg"},
+            {question: "What is the coldest planet in the Solar System?", options: ["Uranus", "Neptune", "Saturn", "Pluto"], correct: "Uranus", img: "uranus.jpeg"},
+            {question: "Which planet has the longest day?", options: ["Earth", "Venus", "Jupiter", "Neptune"], correct: "Venus", img: "venus.jpeg"},
+            {question: "Which planet is known for having a great red spot?", options: ["Jupiter", "Mars", "Saturn", "Neptune"], correct: "Jupiter", img: "jupiter.jpeg"},
+            {question: "Which planet is the second largest in the solar system?", options: ["Jupiter", "Saturn", "Uranus", "Neptune"], correct: "Saturn", img: "saturn.jpeg"},
+            {question: "Which planet is named after the god of the sea?", options: ["Mars", "Jupiter", "Neptune", "Saturn"], correct: "Neptune", img: "neptune.jpeg"},
+            {question: "Which planet is the most distant from Earth?", options: ["Neptune", "Pluto", "Saturn", "Mars"], correct: "Neptune", img: "neptune.jpeg"},
+            {question: "Which planet has a moon called Titan?", options: ["Saturn", "Jupiter", "Mars", "Neptune"], correct: "Saturn", img: "saturn.jpeg"},
+            {question: "Which planet is known for its red dust storms?", options: ["Mars", "Earth", "Venus", "Jupiter"], correct: "Mars", img: "mars.jpeg"},
+            {question: "Which planet has the most moons?", options: ["Jupiter", "Saturn", "Uranus", "Neptune"], correct: "Jupiter", img: "jupiter.jpeg"},
+            {question: "Which planet has the shortest day?", options: ["Mars", "Jupiter", "Saturn", "Earth"], correct: "Jupiter", img: "jupiter.jpeg"},
+            {question: "Which planet is known for having a tilted axis?", options: ["Earth", "Venus", "Uranus", "Saturn"], correct: "Uranus", img: "uranus.jpeg"},
+            {question: "Which planet has the strongest winds?", options: ["Earth", "Jupiter", "Saturn", "Neptune"], correct: "Neptune", img: "neptune.jpeg"},
+            {question: "Which planet is known as the 'morning star'?", options: ["Venus", "Mercury", "Mars", "Saturn"], correct: "Venus", img: "venus.jpeg"}
+        ];
+
+        let score = 0;
+        let currentQuestion = 0;
+        let timer = 30;
+        let timerInterval;
+
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById("question").innerText = question.question;
+            document.getElementById("planet-img").src = question.img;
+
+            const options = document.querySelectorAll(".option-btn");
+            options.forEach((btn, index) => {
+                btn.innerText = question.options[index];
+                btn.disabled = false;
+                btn.style.backgroundColor = "#3a8dff";
+            });
+
+            document.getElementById("timer").innerText = timer;
+            clearInterval(timerInterval); // Clear any previous interval before starting a new one
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (timer <= 0) {
+                clearInterval(timerInterval);
+                alert("Time's up!");
+                nextQuestion();
+            } else {
+                timer--;
+                document.getElementById("timer").innerText = timer;
+            }
+        }
+
+        function checkAnswer(index) {
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll(".option-btn");
+
+            if (options[index].innerText === question.correct) {
+                score++;
+                document.getElementById("score").innerText = score;
+                document.getElementById("correct-sound").play();
+            } else {
+                document.getElementById("wrong-sound").play();
+            }
+
+            options.forEach(btn => {
+                btn.disabled = true;
+                if (btn.innerText === question.correct) {
+                    btn.style.backgroundColor = "#28a745"; // Green for correct
+                } else if (btn.innerText === question.options[index] && btn.innerText !== question.correct) {
+                    btn.style.backgroundColor = "#dc3545"; // Red for wrong
+                }
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+                timer = 30; // Reset timer for the next question
+            } else {
+                clearInterval(timerInterval);
+                alert("Quiz finished! Your score is " + score);
+                document.location.reload(); // Reload the page to restart
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

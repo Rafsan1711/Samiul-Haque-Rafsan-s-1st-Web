@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Selection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Flexbox alignment পরিবর্তন */
+            height: 100vh;
+            margin: 0;
+            background-color: #121212; /* ডার্ক ব্যাকগ্রাউন্ড */
+            color: #ffffff; /* হেডার এবং টেক্সটের জন্য সাদা রঙ */
+            overflow: auto; /* স্ক্রোলিং চালু রাখা */
+        }
+        .game-container {
+            text-align: center;
+            max-width: 100%;
+            padding-top: 20px; /* উপরের কিছু স্পেস রাখা হলো */
+            overflow-y: auto; /* Y-অক্ষের স্ক্রোলিং চালু */
+            max-height: 90vh; /* 90% ভিউপোর্ট উচ্চতা, যাতে স্ক্রোল করতে পারেন */
+        }
+        .game-container img {
+            width: 150px; /* ছবির প্রস্থ */
+            height: 150px; /* ছবির উচ্চতা */
+            margin: 20px;
+            cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* ডার্ক মোডে সাদা শ্যাডো */
+            transition: transform 0.3s, box-shadow 0.3s; /* মাউস হোভার স্টাইল */
+            object-fit: cover; /* ছবির আকারের বিকৃতি রোধ করবে */
+        }
+        .game-container img:hover {
+            transform: scale(1.1); /* হোভার করলে ছবি বড় হবে */
+            box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2); /* হোভার শ্যাডো */
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Choose a Game</h1>
+        <div>
+            <img src="1.jpg" alt="Dot and Box" onclick="openGame('dotAndBox.html')">
+            <img src="2.jpg" alt="Hangman" onclick="openGame('hangman.html')">
+            <img src="3.jpg" alt="Math Quiz" onclick="openGame('mathQuiz.html')">
+            <img src="4.jpg" alt="Tic Tac Toe" onclick="openGame('ticTacToe.html')">
+            <img src="5.jpg" alt="Guess Number" onclick="openGame('guessNumber.html')">
+            <!-- নতুন ছবিগুলি এখানে যোগ করা হলো -->
+            <img src="4inarow.jpg" alt="4 In A Row" onclick="openGame('4inarow.html')">
+            <img src="memory.jpg" alt="Memory Game" onclick="openGame('memory.html')">
+            <!-- আগের গেমের ছবি ও লিংক পুনরায় ফিরিয়ে আনা হলো -->
+            <img src="6.jpg" alt="Astro Quiz" onclick="openGame('astroQuiz.html')">
+            <img src="7.jpg" alt="Quiz" onclick="openGame('quiz.html')">
+        </div>
+    </div>
+
+    <script>
+        function openGame(gameUrl) {
+            window.open(gameUrl, '_blank', 'width=800,height=600');
+        }
+    </script>
+</body>
+</html>

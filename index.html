@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href=" styles.css">
+    <title>Game Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .game-menu {
+            margin: 20px auto;
+        }
+        .game-card {
+            display: inline-block;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 15px 30px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .game-card:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+        .footer a {
+            color: #ffcc00;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            overflow-y: auto;
+            max-height: 70%;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .modal-header h2 {
+            margin: 0;
+        }
+        .close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #333;
+        }
+        .modal-body {
+            line-height: 1.5;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Game Hub</h1>
+        <div class="game-menu">
+            <div class="game-card" onclick="openGameWindow('gamePage.html')">Let's Play Games</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="#" onclick="openModal('aboutUsModal')">About Us</a>
+        <a href="#" onclick="openModal('termsModal')">Terms and Conditions</a>
+        <a href="#" onclick="openModal('policiesModal')">Policies</a>
+    </div>
+
+    <!-- About Us Modal -->
+    <div class="modal" id="aboutUsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>About Us</h2>
+                <button class="close" onclick="closeModal('aboutUsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Created by: Samiul Haque Rafsan</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div class="modal" id="termsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Terms and Conditions</h2>
+                <button class="close" onclick="closeModal('termsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <strong>Last Updated: 6 January 2025</strong><br><br>
+                    Welcome to Game Hub! Before using our game, please read the following terms and conditions carefully. By accessing or using our game, you agree to comply with these terms.<br><br>
+                    <strong>1. Use of the Service</strong><br>
+                    1.1. Game Hub is intended for entertainment purposes only.<br>
+                    1.2. Users must be at least 7 years old to access or use the game.<br>
+                    1.3. Reproduction, modification, or commercial use of any part of the game is strictly prohibited.<br><br>
+                    <strong>2. Accounts and Data</strong><br>
+                    2.1. Users must provide accurate information during registration.<br>
+                    2.2. Using someone else's account or information is not allowed.<br>
+                    2.3. You are responsible for maintaining the security of your account.<br><br>
+                    <strong>3. Restrictions</strong><br>
+                    3.1. Spamming, hacking, or engaging in any unethical behavior is prohibited.<br><br>
+                    <strong>4. Limitation of Liability</strong><br>
+                    4.1. Game Hub is not liable for software bugs, server issues, or data loss.<br>
+                    4.2. We reserve the right to update, suspend, or discontinue the game at any time without prior notice.<br><br>
+                    <strong>5. Changes to Terms</strong><br>
+                    We may update these terms at any time. Continued use of the game after updates will constitute your acceptance of the new terms.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Policies Modal -->
+    <div class="modal" id="policiesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Privacy Policy</h2>
+                <button class="close" onclick="closeModal('policiesModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <strong>Last Updated: 6 January 2025</strong><br><br>
+                    At Game Hub, we are committed to protecting your privacy.<br><br>
+                    <strong>1. Information We Collect</strong><br>
+                    1.1. We may collect your name, email address, and log data.<br>
+                    1.2. In some cases, we may also collect device information, such as IP address and location.<br><br>
+                    <strong>2. How We Use Your Information</strong><br>
+                    2.1. To enhance the game’s performance and customize your experience.<br>
+                    2.2. To provide service updates and notifications.<br><br>
+                    <strong>3. Data Security</strong><br>
+                    We use encryption and other security technologies to protect your personal information.<br><br>
+                    <strong>Contact Us</strong><br>
+                    If you have any questions or concerns, please contact us at <a href="mailto:gamehubsupport@gmail.com">gamehubsupport@gmail.com</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openGameWindow(url) {
+            window.open(url, '_blank', 'width=800,height=600');
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+</html>

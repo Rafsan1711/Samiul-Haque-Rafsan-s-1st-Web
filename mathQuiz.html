@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Quiz Game</title>
+  <style>
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      text-align: center;
+      background-color: #1e293b; /* ডার্ক ব্যাকগ্রাউন্ড */
+      color: #f8fafc; /* হালকা টেক্সট কালার */
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      margin-top: 50px;
+      padding: 20px;
+      background-color: #334155; /* কার্ড স্টাইল */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .timer, .score {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 15px;
+      color: #38bdf8; /* আকর্ষণীয় রঙ */
+    }
+
+    .question {
+      font-size: 28px;
+      font-weight: 600;
+      margin: 20px 0;
+      color: #e2e8f0; /* হালকা রঙ */
+    }
+
+    input[type="text"] {
+      padding: 12px;
+      font-size: 18px;
+      width: 80%;
+      max-width: 300px;
+      text-align: center;
+      border: 2px solid #38bdf8;
+      border-radius: 5px;
+      outline: none;
+      margin-bottom: 20px;
+      color: #1e293b;
+    }
+
+    input[type="text"]:focus {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 5px #0ea5e9;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      margin: 5px;
+      cursor: pointer;
+      background-color: #38bdf8;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0ea5e9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="timer">Time Left: <span id="timer">30</span> seconds</div>
+    <div class="score">Score: <span id="score">0</span></div>
+    <div class="question" id="question">What is 5 + 3?</div>
+    <input type="text" id="answer" placeholder="Enter your answer">
+    <div class="buttons">
+      <button onclick="submitAnswer()">Submit</button>
+      <button onclick="startGame()">Restart</button>
+    </div>
+  </div>
+
+  <script>
+    let timer;
+    let timeLeft = 30;
+    let score = 0;
+    let num1, num2, operator;
+
+    function generateQuestion() {
+      num1 = Math.floor(Math.random() * 10);
+      num2 = Math.floor(Math.random() * 10);
+      operator = ['+', '-'][Math.floor(Math.random() * 2)];
+      document.getElementById('question').innerText = `What is ${num1} ${operator} ${num2}?`;
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      document.getElementById('score').innerText = score;
+      document.getElementById('timer').innerText = timeLeft;
+      document.getElementById('answer').value = '';
+      generateQuestion();
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          alert(`Time's up! Your score: ${score}`);
+        }
+      }, 1000);
+    }
+
+    function submitAnswer() {
+      const userAnswer = parseInt(document.getElementById('answer').value);
+      const correctAnswer = operator === '+' ? num1 + num2 : num1 - num2;
+
+      if (userAnswer === correctAnswer) {
+        score++;
+        document.getElementById('score').innerText = score;
+        generateQuestion();
+      } else {
+        alert('Wrong answer! Try again.');
+      }
+      document.getElementById('answer').value = '';
+    }
+
+    // Initialize the game
+    startGame();
+  </script>
+</body>
+</html>

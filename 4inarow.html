@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4 in a Row</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #181818;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .game-container {
+            background-color: #2f2f2f;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 40px; /* Increased padding for more space */
+            text-align: center;
+            width: 90vw; /* Increased width */
+            max-width: 720px; /* Increased max width */
+            position: relative;
+        }
+
+        h1 {
+            color: #ffeb3b;
+            margin-bottom: 20px;
+            font-size: 36px; /* Increased font size */
+        }
+
+        #status {
+            font-size: 20px; /* Increased font size */
+            font-weight: bold;
+            margin-top: 20px;
+            color: #fff;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr); /* Flexible column width */
+            grid-template-rows: repeat(6, 1fr); /* Flexible row height */
+            gap: 10px; /* Increased gap between cells */
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            width: 100%;
+            padding-top: 100%; /* Maintain square aspect ratio */
+            background-color: #333;
+            border: 2px solid #444;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .cell.X {
+            background-color: red;
+        }
+
+        .cell.O {
+            background-color: blue;
+        }
+
+        .cell:hover {
+            background-color: #555;
+        }
+
+        .cell.X:hover {
+            background-color: #ff4d4d;
+        }
+
+        .cell.O:hover {
+            background-color: #4d94ff;
+        }
+
+        .status-box {
+            background-color: #2a2a2a;
+            padding: 20px; /* Increased padding */
+            border: 1px solid #444;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .status-box div {
+            font-size: 18px; /* Increased font size */
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>4 in a Row</h1>
+        <div id="board" class="board"></div>
+        <div class="status-box">
+            <div id="status">Player Blue's turn</div>
+        </div>
+    </div>
+
+    <script>
+        let currentPlayer = 'O'; // 'O' is Blue, 'X' is Red
+        let gameOver = false;
+        const columns = 7;
+        const rows = 6;
+        let board = Array.from({ length: rows }, () => Array(columns).fill(null));
+
+        const boardElement = document.getElementById('board');
+        const statusElement = document.getElementById('status');
+
+        // Create the board
+        function createBoard() {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < columns; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.addEventListener('click', () => makeMove(c));
+                    boardElement.appendChild(cell);
+                }
+            }
+        }
+
+        // Make a move
+        function makeMove(col) {
+            if (gameOver) return;
+
+            // Find the available row in the column
+            for (let row = rows - 1; row >= 0; row--) {
+                if (!board[row][col]) {
+                    board[row][col] = currentPlayer;
+                    updateBoard();
+                    if (checkWin()) {
+                        statusElement.textContent = `Player ${currentPlayer === 'O' ? 'Blue' : 'Red'} wins!`;
+                        statusElement.style.color = currentPlayer === 'O' ? 'blue' : 'red'; // Change text color based on winner
+                        gameOver = true;
+                    } else if (board.flat().every(cell => cell !== null)) {
+                        statusElement.textContent = "It's a draw!";
+                        statusElement.style.color = 'white'; // Keep text color white for draw
+                        gameOver = true;
+                    } else {
+                        currentPlayer = currentPlayer === 'O' ? 'X' : 'O';
+                        statusElement.textContent = `Player ${currentPlayer === 'O' ? 'Blue' : 'Red'}'s turn`;
+                        statusElement.style.color = 'white'; // Keep text color white during turns
+                    }
+                    return;
+                }
+            }
+        }
+
+        // Update the board display
+        function updateBoard() {
+            const cells = document.querySelectorAll('.cell');
+            let index = 0;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < columns; c++) {
+                    if (board[r][c]) {
+                        cells[index].classList.add(board[r][c]);
+                    } else {
+                        cells[index].classList.remove('X', 'O');
+                    }
+                    index++;
+                }
+            }
+        }
+
+        // Check if the current player has won
+        function checkWin() {
+            // Check horizontal, vertical, and diagonal lines
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < columns; c++) {
+                    if (board[r][c] && 
+                        ((c + 3 < columns && 
+                          board[r][c] === board[r][c + 1] && 
+                          board[r][c] === board[r][c + 2] && 
+                          board[r][c] === board[r][c + 3]) || 
+                         (r + 3 < rows && 
+                          board[r][c] === board[r + 1][c] && 
+                          board[r][c] === board[r + 2][c] && 
+                          board[r][c] === board[r + 3][c]) || 
+                         (r + 3 < rows && c + 3 < columns && 
+                          board[r][c] === board[r + 1][c + 1] && 
+                          board[r][c] === board[r + 2][c + 2] && 
+                          board[r][c] === board[r + 3][c + 3]) || 
+                         (r - 3 >= 0 && c + 3 < columns && 
+                          board[r][c] === board[r - 1][c + 1] && 
+                          board[r][c] === board[r - 2][c + 2] && 
+                          board[r][c] === board[r - 3][c + 3]))) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>

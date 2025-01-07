@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .rematch {
+            background-color: #555;
+            display: none;
+        }
+        .rematch:hover {
+            background-color: #777;
+        }
+        #result {
+            font-size: 1.5em;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #attempts {
+            font-weight: bold;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Guess the Number</h1>
+        <p>Enter a number between 1 and 100:</p>
+        <input type="number" id="guessInput" placeholder="Enter your guess" min="1" max="100">
+        <button class="button" onclick="checkGuess()">Submit</button>
+        <p id="result"></p>
+        <p>Attempts left: <span id="attempts">7</span></p>
+        <button class="button rematch" id="rematchButton" onclick="resetGame()">Rematch</button>
+    </div>
+
+    <audio id="correctSound" src="correct-6033.mp3"></audio>
+    <audio id="wrongSound" src="wrong-47985.mp3"></audio>
+    <audio id="gameOverSound" src="game-over-38511.mp3"></audio>
+
+    <script>
+        let randomNumber = Math.floor(Math.random() * 100) + 1;
+        let attemptsLeft = 7;
+
+        function checkGuess() {
+            const guess = parseInt(document.getElementById('guessInput').value);
+            const result = document.getElementById('result');
+            const attempts = document.getElementById('attempts');
+            const correctSound = document.getElementById('correctSound');
+            const wrongSound = document.getElementById('wrongSound');
+            const gameOverSound = document.getElementById('gameOverSound');
+            const rematchButton = document.getElementById('rematchButton');
+
+            if (attemptsLeft > 0) {
+                if (guess === randomNumber) {
+                    result.textContent = "🎉 Congratulations! You guessed it right!";
+                    correctSound.play();
+                    attemptsLeft = 0; // Stop further attempts
+                    rematchButton.style.display = "inline-block";
+                } else if (guess > randomNumber) {
+                    result.textContent = "🔺 Too high! Try again.";
+                    wrongSound.play();
+                } else {
+                    result.textContent = "🔻 Too low! Try again.";
+                    wrongSound.play();
+                }
+                attemptsLeft--;
+                attempts.textContent = attemptsLeft;
+            }
+
+            if (attemptsLeft === 0 && guess !== randomNumber) {
+                result.textContent = `😢 Game Over! The correct number was ${randomNumber}.`;
+                gameOverSound.play();
+                rematchButton.style.display = "inline-block";
+            }
+        }
+
+        function resetGame() {
+            randomNumber = Math.floor(Math.random() * 100) + 1;
+            attemptsLeft = 7;
+            document.getElementById('guessInput').value = '';
+            document.getElementById('result').textContent = '';
+            document.getElementById('attempts').textContent = attemptsLeft;
+            document.getElementById('rematchButton').style.display = "none";
+        }
+    </script>
+</body>
+</html>

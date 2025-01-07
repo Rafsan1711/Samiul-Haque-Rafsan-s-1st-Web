@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dot and Box Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      background-color: #121212;
+      color: #ffffff;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    #game-board {
+      display: grid;
+      gap: 5px;
+      margin: 20px auto;
+      width: 350px;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      background-color: #ffffff;
+      border-radius: 50%;
+    }
+    .line {
+      background-color: #444;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .line.horizontal {
+      height: 6px;
+      width: 60px;
+    }
+    .line.vertical {
+      height: 60px;
+      width: 6px;
+    }
+    .line.active {
+      background-color: #00ff00;
+    }
+    .box {
+      width: 60px;
+      height: 60px;
+      background-color: #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #ffffff;
+    }
+    .player-1 {
+      background-color: #4a90e2; /* Blue */
+    }
+    .player-2 {
+      background-color: #e94e77; /* Red */
+    }
+    #status {
+      margin: 20px 0;
+      font-size: 1.2em;
+    }
+    #winner-message {
+      margin: 20px 0;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #00ff00;
+    }
+    #restart {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #555;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #restart:hover {
+      background-color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dot and Box Game</h1>
+  <div id="status">Player 1's turn (Blue)</div>
+  <div id="winner-message"></div>
+  <div id="game-board"></div>
+  <button id="restart">Restart Game</button>
+
+  <script>
+    const boardSize = 5;
+    const gameBoard = document.getElementById("game-board");
+    const status = document.getElementById("status");
+    const winnerMessage = document.getElementById("winner-message");
+    const restartButton = document.getElementById("restart");
+
+    let currentPlayer = 1;
+    let scores = { 1: 0, 2: 0 };
+    let lines = new Set();
+
+    const victorySound = new Audio("correct-6033.mp3");
+
+    function createBoard() {
+      winnerMessage.textContent = "";
+      const gridTemplate = [];
+      for (let i = 0; i < boardSize * 2 - 1; i++) {
+        gridTemplate.push("auto");
+      }
+      gameBoard.style.gridTemplateColumns = gridTemplate.join(" ");
+
+      for (let row = 0; row < boardSize * 2 - 1; row++) {
+        for (let col = 0; col < boardSize * 2 - 1; col++) {
+          if (row % 2 === 0 && col % 2 === 0) {
+            const dot = document.createElement("div");
+            dot.className = "dot";
+            gameBoard.appendChild(dot);
+          } else if (row % 2 === 0 || col % 2 === 0) {
+            const line = document.createElement("div");
+            line.className = `line ${
+              row % 2 === 0 ? "horizontal" : "vertical"
+            }`;
+            line.dataset.row = row;
+            line.dataset.col = col;
+            line.addEventListener("click", () => selectLine(row, col));
+            gameBoard.appendChild(line);
+          } else {
+            const box = document.createElement("div");
+            box.className = "box";
+            box.dataset.row = row;
+            box.dataset.col = col;
+            gameBoard.appendChild(box);
+          }
+        }
+      }
+    }
+
+    function selectLine(row, col) {
+      const lineKey = `${row}-${col}`;
+      if (lines.has(lineKey)) return;
+      lines.add(lineKey);
+
+      const lineElement = document.querySelector(
+        `.line[data-row="${row}"][data-col="${col}"]`
+      );
+      lineElement.classList.add("active");
+      lineElement.style.backgroundColor =
+        currentPlayer === 1 ? "#4a90e2" : "#e94e77";
+
+      if (!checkForCompletedBoxes(row, col)) {
+        currentPlayer = currentPlayer === 1 ? 2 : 1;
+        updateStatus();
+      } else if (isGameOver()) {
+        declareWinner();
+      }
+    }
+
+    function checkForCompletedBoxes(row, col) {
+      let completed = false;
+
+      const checkBox = (r, c) => {
+        if (
+          r > 0 &&
+          c > 0 &&
+          lines.has(`${r - 1}-${c}`) &&
+          lines.has(`${r + 1}-${c}`) &&
+          lines.has(`${r}-${c - 1}`) &&
+          lines.has(`${r}-${c + 1}`)
+        ) {
+          const box = document.querySelector(
+            `.box[data-row="${r}"][data-col="${c}"]`
+          );
+          if (!box.classList.contains("player-1") && !box.classList.contains("player-2")) {
+            box.classList.add(currentPlayer === 1 ? "player-1" : "player-2");
+            box.textContent = currentPlayer;
+            scores[currentPlayer]++;
+            completed = true;
+          }
+        }
+      };
+
+      if (row % 2 === 0) {
+        checkBox(row - 1, col);
+        checkBox(row + 1, col);
+      } else {
+        checkBox(row, col - 1);
+        checkBox(row, col + 1);
+      }
+
+      return completed;
+    }
+
+    function updateStatus() {
+      status.textContent = `Player ${currentPlayer}'s turn (${
+        currentPlayer === 1 ? "Blue" : "Red"
+      })`;
+    }
+
+    function isGameOver() {
+      return scores[1] + scores[2] === (boardSize - 1) * (boardSize - 1);
+    }
+
+    function declareWinner() {
+      const winner = scores[1] > scores[2] ? "Blue" : "Red";
+      status.textContent = "";
+      winnerMessage.textContent = `${winner} is the winner!`;
+      victorySound.play();
+    }
+
+    function restartGame() {
+      gameBoard.innerHTML = "";
+      currentPlayer = 1;
+      scores = { 1: 0, 2: 0 };
+      lines.clear();
+      createBoard();
+      updateStatus();
+    }
+
+    restartButton.addEventListener("click", restartGame);
+
+    createBoard();
+  </script>
+</body>
+</html>
