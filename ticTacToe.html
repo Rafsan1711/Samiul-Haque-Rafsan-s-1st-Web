@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Tic Tac Toe</title> 
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #444;
+            font-size: 36px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .cell:hover {
+            background-color: #666;
+        }
+        .button {
+            margin: 10px;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+        #turn-indicator {
+            font-size: 18px;
+            margin: 10px;
+        }
+        .player-indicators span {
+            margin: 0 10px;
+        }
+    </style> 
+ </head> 
+ <body> <!-- Start Screen --> 
+  <div id="start-screen" class="container"> 
+   <h1>Welcome to Tic Tac Toe</h1> <button class="button" onclick="startGame('friend')">Play with a Friend</button> <button class="button" onclick="startGame('bot')">Play with a Bot</button> 
+  </div> <!-- Game Screen --> 
+  <div id="game-screen" class="container hidden"> 
+   <h1>Tic Tac Toe</h1> 
+   <div class="player-indicators"> <span style="color: red;">Red (X)</span> <span style="color: blue;">Blue (O)</span> 
+   </div> 
+   <div class="board"> 
+    <div class="cell" onclick="makeMove(this, 0)"></div> 
+    <div class="cell" onclick="makeMove(this, 1)"></div> 
+    <div class="cell" onclick="makeMove(this, 2)"></div> 
+    <div class="cell" onclick="makeMove(this, 3)"></div> 
+    <div class="cell" onclick="makeMove(this, 4)"></div> 
+    <div class="cell" onclick="makeMove(this, 5)"></div> 
+    <div class="cell" onclick="makeMove(this, 6)"></div> 
+    <div class="cell" onclick="makeMove(this, 7)"></div> 
+    <div class="cell" onclick="makeMove(this, 8)"></div> 
+   </div> 
+   <p id="winner"></p> 
+   <p id="turn-indicator">Your Turn</p> <button class="button" onclick="resetGame()">Rematch</button> 
+  </div> 
+  <script>
+        let currentPlayer = 'X';
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let mode = ''; // Stores game mode ('friend' or 'bot')
+
+        // Function to handle game start
+        function startGame(selectedMode) {
+            mode = selectedMode;
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+        }
+
+        function makeMove(cell, index) {
+            if (!cell.textContent && !document.getElementById('winner').textContent) {
+                board[index] = currentPlayer;
+                cell.textContent = currentPlayer;
+                cell.style.color = currentPlayer === 'X' ? 'red' : 'blue';
+
+                if (checkWinner()) {
+                    document.getElementById('winner').textContent = `${currentPlayer} Wins!`;
+                    document.getElementById('turn-indicator').textContent = '';
+                } else if (!board.includes('')) {
+                    document.getElementById('winner').textContent = "It's a Draw!";
+                    document.getElementById('turn-indicator').textContent = '';
+                } else if (mode === 'bot' && currentPlayer === 'X') {
+                    // Bot's turn
+                    currentPlayer = 'O';
+                    document.getElementById('turn-indicator').textContent = "Bot's Turn";
+                    setTimeout(botMove, 1000); // Delay for bot's move
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    document.getElementById('turn-indicator').textContent = currentPlayer === 'X' ? "Your Turn" : "Opponent's Turn";
+                }
+            }
+        }
+
+        function botMove() {
+            const move = minimax(board, 'O').index;
+            const cell = document.querySelectorAll('.cell')[move];
+            if (cell) {
+                board[move] = currentPlayer;
+                cell.textContent = currentPlayer;
+                cell.style.color = 'blue';
+
+                if (checkWinner()) {
+                    document.getElementById('winner').textContent = "Bot Wins!";
+                    document.getElementById('turn-indicator').textContent = '';
+                } else if (!board.includes('')) {
+                    document.getElementById('winner').textContent = "It's a Draw!";
+                    document.getElementById('turn-indicator').textContent = '';
+                } else {
+                    currentPlayer = 'X';
+                    document.getElementById('turn-indicator').textContent = "Your Turn";
+                }
+            }
+        }
+
+        function minimax(newBoard, player) {
+            const availableSpots = newBoard.map((cell, index) => cell === '' ? index : null).filter(index => index !== null);
+
+            if (checkWinner('X')) {
+                return { score: -10 };
+            } else if (checkWinner('O')) {
+                return { score: 10 };
+            } else if (availableSpots.length === 0) {
+                return { score: 0 };
+            }
+
+            const moves = [];
+            for (let i = 0; i < availableSpots.length; i++) {
+                const move = {};
+                move.index = availableSpots[i];
+                newBoard[availableSpots[i]] = player;
+
+                if (player === 'O') {
+                    const result = minimax(newBoard, 'X');
+                    move.score = result.score;
+                } else {
+                    const result = minimax(newBoard, 'O');
+                    move.score = result.score;
+                }
+
+                newBoard[availableSpots[i]] = '';
+                moves.push(move);
+            }
+
+            let bestMove;
+            if (player === 'O') {
+                let bestScore = -Infinity;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score > bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score < bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            }
+
+            return moves[bestMove];
+        }
+
+        function checkWinner(player = currentPlayer) {
+            const winningCombos = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            return winningCombos.some(combo =>
+                combo.every(index => board[index] === player)
+            );
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.style.color = '';
+            });
+            document.getElementById('winner').textContent = '';
+            document.getElementById('turn-indicator').textContent = "Your Turn";
+            currentPlayer = 'X';
+        }
+    </script> 
+ </body>
+</html>
