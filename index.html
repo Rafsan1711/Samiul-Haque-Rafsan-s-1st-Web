@@ -2,16 +2,18 @@
 <html lang="en">
 <head>
     <meta name="description" content="A fun and interactive game made with HTML, CSS, and JavaScript.">
-<meta name="keywords" content="game, HTML game, JavaScript game, free game,Tic Tac Toe, Dot and box">
-<meta name="author" content="Samiul Haque Rafsan">
-    <link rel="stylesheet" href=" styles.css">
+    <meta name="keywords" content="game, HTML game, JavaScript game, free game,Tic Tac Toe, Dot and box">
+    <meta name="author" content="Samiul Haque Rafsan">
+
+    <link rel="stylesheet" href="styles.css">
+
     <title>Game Hub</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
+            background-color: #121212;
             color: #333;
         }
         .container {
@@ -19,7 +21,7 @@
             padding: 20px;
         }
         h1 {
-            color: #333;
+            color: #f0f0f0;
         }
         .game-menu {
             margin: 20px auto;
@@ -27,11 +29,11 @@
         .game-card {
             display: inline-block;
             background-color: #007BFF;
-            color: #fff;
+            color: white;
             padding: 15px 30px;
             margin: 10px;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 30px;
             text-decoration: none;
         }
         .game-card:hover {
@@ -99,6 +101,15 @@
             line-height: 1.5;
             font-size: 14px;
         }
+        /* Thumbnail Styling */
+        .thumbnail-container {
+            margin-top: 20px;
+        }
+        .thumbnail-container img {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 40px;
+        }
     </style>
 </head>
 <body>
@@ -106,6 +117,9 @@
         <h1>🎮 Game Hub</h1>
         <div class="game-menu">
             <div class="game-card" onclick="openGameWindow('gamePage.html')">Let's Play Games</div>
+        </div>
+        <div class="thumbnail-container">
+            <img src="thumbnail.jpg" alt="Game Thumbnail">
         </div>
     </div>
 
@@ -123,9 +137,9 @@
                 <button class="close" onclick="closeModal('aboutUsModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Created by: Samiul Haque Rafsan</p><p>
-            © 2025, Samiul Haque Rafsan. All rights reserved.
-                </p>
+                <p>Created by: Samiul Haque Rafsan</p>
+                <p>© 2025, Samiul Haque Rafsan. All rights reserved.</p>
+                <img src="thumbnail.jpg" alt="Game  Thumbnail" style="width: 100%; max-width: 800px; border-radius: 40px">
             </div>
         </div>
     </div>

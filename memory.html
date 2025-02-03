@@ -1,37 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Memory Game</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
-    /* Reset and body styles */
+    /* Body and overall layout */
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
       background-color: #121212;
       color: #ffffff;
       text-align: center;
+      overflow: hidden; /* Prevents scrolling */
     }
 
-    /* Game title */
+    /* Header styling (smaller than before) */
     h1 {
-      margin: 10px;
-      font-size: 48px;
+      margin: 10px 0;
+      font-size: 36px; /* Reduced font-size */
       font-weight: bold;
-      color: #f39c12;
+      color: #ffcc00;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      letter-spacing: 1px;
     }
 
-    /* Instructions */
+    /* Instruction text */
     p {
-      margin: 5px;
-      font-size: 18px;
+      margin: 5px 0;
+      font-size: 16px; /* Reduced font-size */
       color: #f1c40f;
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
 
-    /* Game board styles */
+    /* Game board remains unchanged */
     .game-board {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
@@ -39,6 +43,7 @@
       max-width: 600px;
       margin: 20px auto;
     }
+
     .card {
       width: 60px;
       height: 60px;
@@ -53,37 +58,71 @@
       cursor: pointer;
       transition: transform 0.3s, background-color 0.3s;
     }
+
     .card.flipped {
       background-color: #444;
       color: #ffffff;
     }
+
     .card.matched {
       background-color: #28a745;
       color: #ffffff;
       pointer-events: none;
     }
 
-    /* Scoreboard */
+    /* Scoreboard styling */
     .scoreboard {
       display: flex;
       justify-content: center;
-      gap: 30px;
+      gap: 25px;
       margin-top: 10px;
+      font-size: 16px; /* Reduced font-size */
     }
+
     .team {
-      font-size: 18px;
+      font-weight: bold;
+      padding: 8px;
+      border-radius: 8px;
     }
+
     .blue-team {
       color: #007bff;
     }
+
     .red-team {
       color: #ff3b3b;
+    }
+
+    /* Turn Indicator styling */
+    .turn-indicator {
+      font-size: 18px; /* Reduced font-size */
+      font-weight: bold;
+      padding: 8px 15px;
+      margin: 10px auto;
+      display: inline-block;
+      border-radius: 8px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease-in-out, background 0.3s;
+    }
+
+    .blue-turn {
+      background-color: #007bff;
+    }
+
+    .red-turn {
+      background-color: #ff3b3b;
     }
   </style>
 </head>
 <body>
   <h1>Memory Match Game</h1>
-  <p>Flip two cards to find a matching pair. Compete as Blue vs. Red!</p>
+  <p>Flip two cards to find a matching pair. Compete as <span class="blue-team">Blue</span> vs <span class="red-team">Red</span>!</p>
+
+  <!-- Turn Indicator -->
+  <div id="turn-indicator" class="turn-indicator blue-turn animate__animated animate__zoomIn">
+    Blue Team's Turn
+  </div>
 
   <div class="scoreboard">
     <div class="team blue-team">Blue Team: <span id="blue-score">0</span></div>
@@ -93,7 +132,6 @@
   <div class="game-board"></div>
 
   <script>
-    // Emoji pairs (15 pairs now)
     const emojis = [
       '🍎', '🍌', '🍒', '🍇', '🍉', '🍓', 
       '🍍', '🥭', '🍑', '🍋', '🥝', '🍐', 
@@ -104,6 +142,7 @@
     const gameBoard = document.querySelector('.game-board');
     const blueScoreDisplay = document.getElementById('blue-score');
     const redScoreDisplay = document.getElementById('red-score');
+    const turnIndicator = document.getElementById('turn-indicator');
 
     let flippedCards = [];
     let matchedCards = [];
@@ -120,7 +159,7 @@
       return array;
     }
 
-    // Initialize game
+    // Initialize game (board remains unchanged)
     function initializeGame() {
       const shuffledCards = shuffle([...cardsArray]);
       shuffledCards.forEach(emoji => {
@@ -139,7 +178,7 @@
       });
     }
 
-    // Flip card
+    // Flip card function remains unchanged
     function flipCard(card) {
       card.classList.add('flipped');
       card.style.color = 'white';
@@ -154,16 +193,16 @@
       }
     }
 
-    // Check for a match
+    // Check for a match and update turn accordingly
     function checkMatch() {
       const [card1, card2] = flippedCards;
 
       if (card1.dataset.emoji === card2.dataset.emoji) {
+        // If matched, keep same team and update score
         card1.classList.add('matched');
         card2.classList.add('matched');
         matchedCards.push(card1, card2);
 
-        // Update score
         scores[currentTeam]++;
         updateScoreboard();
 
@@ -171,18 +210,19 @@
         if (matchedCards.length === cardsArray.length) {
           setTimeout(() => alert('Game Over! Blue Team: ' + scores.blue + ', Red Team: ' + scores.red), 500);
         }
+        // (No team switch here; same team continues)
       } else {
+        // If not matched, flip back cards and switch team
         setTimeout(() => {
           card1.classList.remove('flipped');
           card2.classList.remove('flipped');
           card1.style.color = 'transparent';
           card2.style.color = 'transparent';
+          switchTeam();
         }, 500);
       }
 
-      // Switch team
       flippedCards = [];
-      currentTeam = currentTeam === 'blue' ? 'red' : 'blue';
     }
 
     // Update scoreboard
@@ -191,7 +231,13 @@
       redScoreDisplay.textContent = scores.red;
     }
 
-    // Start game
+    // Switch team and update turn indicator with animation
+    function switchTeam() {
+      currentTeam = currentTeam === 'blue' ? 'red' : 'blue';
+      turnIndicator.textContent = currentTeam === 'blue' ? "Blue Team's Turn" : "Red Team's Turn";
+      turnIndicator.className = `turn-indicator animate__animated animate__zoomIn ${currentTeam === 'blue' ? 'blue-turn' : 'red-turn'}`;
+    }
+
     initializeGame();
   </script>
 </body>
